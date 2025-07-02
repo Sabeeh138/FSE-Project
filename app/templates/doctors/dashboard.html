@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col">
+            <h2><i class="bi bi-speedometer2 me-2"></i>Doctor Dashboard</h2>
+        </div>
+        <div class="col text-end">
+            <a href="{{ url_for('doctors.edit_profile') }}" class="btn btn-primary">
+                <i class="bi bi-person-gear me-2"></i>Edit Profile
+            </a>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Profile Information</h5>
+                    <p class="card-text">
+                        <strong>Name:</strong> {{ doctor.first_name }} {{ doctor.last_name }}<br>
+                        <strong>Specialization:</strong> {{ doctor.specialization }}<br>
+                        <strong>Qualification:</strong> {{ doctor.qualification }}<br>
+                        <strong>Experience:</strong> {{ doctor.experience_years }} years<br>
+                        <strong>Office Room:</strong> {{ doctor.office_room }}<br>
+                        <strong>Contact:</strong> {{ doctor.contact_number }}<br>
+                        <strong>Email:</strong> {{ doctor.email }}
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Upcoming Appointments</h5>
+                    {% if upcoming_appointments %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Date & Time</th>
+                                    <th>Patient</th>
+                                    <th>Purpose</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for appointment in upcoming_appointments %}
+                                <tr>
+                                    <td>{{ appointment.appointment_date.strftime('%Y-%m-%d %H:%M') }}</td>
+                                    <td>{{ appointment.patient.first_name }} {{ appointment.patient.last_name }}</td>
+                                    <td>{{ appointment.purpose }}</td>
+                                    <td>
+                                        <span class="badge bg-{{ 'primary' if appointment.status == 'scheduled' else 'success' if appointment.status == 'completed' else 'danger' }}">
+                                            {{ appointment.status.title() }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <a href="{{ url_for('doctors.patient_details', patient_id=appointment.patient.id) }}" class="btn btn-sm btn-info">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+                                            <form action="{{ url_for('doctors.update_appointment_status', appointment_id=appointment.id) }}" method="POST" class="d-inline">
+                                                <input type="hidden" name="status" value="completed">
+                                                <button type="submit" class="btn btn-sm btn-success" {{ 'disabled' if appointment.status != 'scheduled' }}>
+                                                    <i class="bi bi-check-lg"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <p class="text-muted">No upcoming appointments.</p>
+                    {% endif %}
+                    <div class="text-end mt-3">
+                        <a href="{{ url_for('doctors.appointments') }}" class="btn btn-primary">
+                            <i class="bi bi-calendar3 me-2"></i>View All Appointments
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

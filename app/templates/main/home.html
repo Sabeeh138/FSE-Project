@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8 text-center">
+            <h1 class="display-4 mb-4">
+                <i class="bi bi-hospital me-3"></i>
+                Welcome to Hospital Management System
+            </h1>
+            <p class="lead mb-4">
+                A comprehensive solution for managing hospital operations, patient care, and medical records.
+            </p>
+        </div>
+    </div>
+
+    {% if not current_user.is_authenticated %}
+    <div class="row justify-content-center mt-4">
+        <div class="col-md-6 text-center">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Get Started</h5>
+                    <p class="card-text">Please login to access the system.</p>
+                    <a href="{{ url_for('auth.login') }}" class="btn btn-primary">
+                        <i class="bi bi-box-arrow-in-right me-2"></i>Login
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="row mt-5">
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-people display-4 text-primary mb-3"></i>
+                    <h5 class="card-title">Patient Care</h5>
+                    <p class="card-text">Efficient management of patient records, appointments, and medical history.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-calendar-check display-4 text-primary mb-3"></i>
+                    <h5 class="card-title">Appointment Management</h5>
+                    <p class="card-text">Streamlined scheduling and management of patient appointments.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-box-seam display-4 text-primary mb-3"></i>
+                    <h5 class="card-title">Inventory Control</h5>
+                    <p class="card-text">Efficient management of medical supplies and equipment.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

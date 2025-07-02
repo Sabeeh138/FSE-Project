@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col">
+            <h2><i class="bi bi-person-badge me-2"></i>Doctor Management</h2>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="bi bi-list-ul me-2"></i>Doctor List</h5>
+                </div>
+                <div class="card-body">
+                    {% if doctors %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Specialization</th>
+                                    <th>Contact</th>
+                                    <th>Email</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for doctor in doctors %}
+                                <tr>
+                                    <td>{{ doctor.id }}</td>
+                                    <td>Dr. {{ doctor.first_name }} {{ doctor.last_name }}</td>
+                                    <td>{{ doctor.specialization }}</td>
+                                    <td>{{ doctor.contact_number }}</td>
+                                    <td>{{ doctor.email }}</td>
+                                    <td>
+                                        <a href="{{ url_for('receptionists.doctor_details', doctor_id=doctor.id) }}" class="btn btn-sm btn-info">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a href="{{ url_for('receptionists.doctor_schedule', doctor_id=doctor.id) }}" class="btn btn-sm btn-primary">
+                                            <i class="bi bi-calendar-week"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle me-2"></i>No doctors found.
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="bi bi-calendar-week me-2"></i>Doctor Schedules</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <form method="GET" action="{{ url_for('receptionists.doctor_schedules') }}" class="row g-3">
+                            <div class="col-md-4">
+                                <label class="form-label">Filter by Date</label>
+                                <input type="date" name="date" class="form-control" value="{{ request.args.get('date', '') }}">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Filter by Doctor</label>
+                                <select name="doctor_id" class="form-select">
+                                    <option value="">All Doctors</option>
+                                    {% for doctor in doctors %}
+                                    <option value="{{ doctor.id }}" {% if request.args.get('doctor_id')|int == doctor.id %}selected{% endif %}>
+                                        Dr. {{ doctor.first_name }} {{ doctor.last_name }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-4 d-flex align-items-end">
+                                <button type="submit" class="btn btn-secondary me-2">Filter</button>
+                                <a href="{{ url_for('receptionists.doctor_schedules') }}" class="btn btn-outline-secondary">Reset</a>
+                            </div>
+                        </form>
+                    </div>
+
+                    {% if schedules %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Doctor</th>
+                                    <th>Day</th>
+                                    <th>Start Time</th>
+                                    <th>End Time</th>
+                                    <th>Available</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for schedule in schedules %}
+                                <tr>
+                                    <td>Dr. {{ schedule.doctor.first_name }} {{ schedule.doctor.last_name }}</td>
+                                    <td>{{ schedule.day }}</td>
+                                    <td>{{ schedule.start_time.strftime('%H:%M') }}</td>
+                                    <td>{{ schedule.end_time.strftime('%H:%M') }}</td>
+                                    <td>
+                                        <span class="badge {% if schedule.is_available %}bg-success{% else %}bg-danger{% endif %}">
+                                            {{ 'Available' if schedule.is_available else 'Unavailable' }}
+                                        </span>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle me-2"></i>No schedules found.
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

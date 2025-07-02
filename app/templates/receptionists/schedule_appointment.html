@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col">
+            <h2><i class="bi bi-calendar-plus me-2"></i>Schedule Appointment</h2>
+        </div>
+        <div class="col-auto">
+            <a href="{{ url_for('receptionists.appointments') }}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left me-2"></i>Back to Appointments
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card">
+                <div class="card-body">
+                    {% if patient %}
+                    <h5 class="card-title">Patient: {{ patient.first_name }} {{ patient.last_name }}</h5>
+                    <input type="hidden" name="patient_id" value="{{ patient.id }}">
+                    {% endif %}
+                    
+                    <form method="POST">
+                        {{ form.hidden_tag() }}
+                        
+                        {% if not patient %}
+                        <div class="mb-3">
+                            <label for="patient_id" class="form-label">Patient</label>
+                            <select name="patient_id" id="patient_id" class="form-select" required>
+                                <option value="">Select a patient</option>
+                                {% for patient in patients %}
+                                <option value="{{ patient.id }}">{{ patient.first_name }} {{ patient.last_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        {% endif %}
+                        
+                        <div class="mb-3">
+                            {{ form.doctor.label(class="form-label") }}
+                            {{ form.doctor(class="form-select" + (" is-invalid" if form.doctor.errors else "")) }}
+                            {% for error in form.doctor.errors %}
+                                <div class="invalid-feedback">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            {{ form.appointment_date.label(class="form-label") }}
+                            {{ form.appointment_date(class="form-control" + (" is-invalid" if form.appointment_date.errors else ""), type="date") }}
+                            {% for error in form.appointment_date.errors %}
+                                <div class="invalid-feedback">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            {{ form.purpose.label(class="form-label") }}
+                            {{ form.purpose(class="form-control" + (" is-invalid" if form.purpose.errors else "")) }}
+                            {% for error in form.purpose.errors %}
+                                <div class="invalid-feedback">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            {{ form.notes.label(class="form-label") }}
+                            {{ form.notes(class="form-control" + (" is-invalid" if form.notes.errors else ""), rows=4) }}
+                            {% for error in form.notes.errors %}
+                                <div class="invalid-feedback">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="mb-3 form-check">
+                            {{ form.is_inpatient(class="form-check-input" + (" is-invalid" if form.is_inpatient.errors else "")) }}
+                            {{ form.is_inpatient.label(class="form-check-label") }}
+                            {% for error in form.is_inpatient.errors %}
+                                <div class="invalid-feedback">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            {{ form.submit(class="btn btn-primary") }}
+                            <a href="{{ url_for('receptionists.appointments') }}" class="btn btn-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

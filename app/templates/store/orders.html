@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col">
+            <h2><i class="bi bi-clipboard-check me-2"></i>Orders Management</h2>
+        </div>
+        <div class="col text-end">
+            <a href="{{ url_for('store.create_order') }}" class="btn btn-primary">
+                <i class="bi bi-plus-lg me-2"></i>Create New Order
+            </a>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header bg-light">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h5 class="mb-0">Filter Orders</h5>
+                </div>
+                <div class="col-md-6">
+                    <form method="GET" action="{{ url_for('store.orders') }}" class="d-flex">
+                        <select name="status" class="form-select me-2">
+                            <option value="all" {% if selected_status == 'all' or not selected_status %}selected{% endif %}>All Orders</option>
+                            <option value="pending" {% if selected_status == 'pending' %}selected{% endif %}>Pending</option>
+                            <option value="delivered" {% if selected_status == 'delivered' %}selected{% endif %}>Delivered</option>
+                            <option value="cancelled" {% if selected_status == 'cancelled' %}selected{% endif %}>Cancelled</option>
+                        </select>
+                        <button type="submit" class="btn btn-primary">Filter</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            {% if orders %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Supplier</th>
+                            <th>Date</th>
+                            <th>Total Amount</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in orders %}
+                        <tr>
+                            <td>#{{ order.id }}</td>
+                            <td>{{ order.supplier.name }}</td>
+                            <td>{{ order.order_date.strftime('%Y-%m-%d %H:%M') }}</td>
+                            <td>${{ order.total_amount|round(2) }}</td>
+                            <td>
+                                <span class="badge bg-{% if order.status == 'pending' %}warning{% elif order.status == 'delivered' %}success{% elif order.status == 'cancelled' %}danger{% endif %}">
+                                    {{ order.status|title }}
+                                </span>
+                            </td>
+                            <td>
+                                <a href="{{ url_for('store.order_details', order_id=order.id) }}" class="btn btn-sm btn-info">
+                                    <i class="bi bi-eye"></i> View
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="alert alert-info">
+                <i class="bi bi-info-circle me-2"></i>No orders found. {% if selected_status %}Try changing the filter or {% endif %}<a href="{{ url_for('store.create_order') }}">create a new order</a>.
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

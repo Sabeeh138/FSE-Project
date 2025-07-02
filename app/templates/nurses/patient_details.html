@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4 animate__animated animate__fadeInDown">
+        <div class="col">
+            <h2><i class="bi bi-person me-2"></i>Patient Details</h2>
+        </div>
+        <div class="col text-end">
+            <a href="{{ url_for('nurses.assigned_patients') }}" class="btn btn-secondary me-2" data-bs-toggle="tooltip" title="Return to patient list">
+                <i class="bi bi-arrow-left me-1"></i>Back to Patients
+            </a>
+            <a href="{{ url_for('nurses.update_patient_status', patient_id=patient.id) }}" class="btn btn-primary" data-bs-toggle="tooltip" title="Update patient's vital signs and status">
+                <i class="bi bi-pencil me-2"></i>Update Status
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card shadow animate__animated animate__fadeIn">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0"><i class="bi bi-person-badge me-2"></i>Patient Information</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span><i class="bi bi-person me-2"></i>Name:</span>
+                            <span class="fw-bold">{{ patient.first_name }} {{ patient.last_name }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span><i class="bi bi-calendar me-2"></i>Date of Birth:</span>
+                            <span>{{ patient.date_of_birth.strftime('%Y-%m-%d') }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span><i class="bi bi-gender-ambiguous me-2"></i>Gender:</span>
+                            <span>{{ patient.gender }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span><i class="bi bi-droplet me-2"></i>Blood Group:</span>
+                            <span class="badge bg-danger">{{ patient.blood_group }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span><i class="bi bi-telephone me-2"></i>Contact:</span>
+                            <span>{{ patient.contact_number }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span><i class="bi bi-envelope me-2"></i>Email:</span>
+                            <span>{{ patient.email }}</span>
+                        </li>
+                        <li class="list-group-item">
+                            <span><i class="bi bi-geo-alt me-2"></i>Address:</span><br>
+                            <span class="text-muted">{{ patient.address }}</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Admission Information</h5>
+                    {% set appointment = patient.appointments|selectattr('is_inpatient', 'equalto', true)|selectattr('status', 'equalto', 'scheduled')|first %}
+                    {% if appointment %}
+                    <p class="card-text">
+                        <strong>Room:</strong> 
+                        {% if appointment.room %}
+                            {{ appointment.room.room_number }} ({{ appointment.room.room_type }})<br>
+                            <strong>Daily Rate:</strong> ${{ appointment.room.daily_rate }}<br>
+                        {% else %}
+                            Not assigned<br>
+                        {% endif %}
+                        <strong>Admission Date:</strong> {{ appointment.appointment_date.strftime('%Y-%m-%d') }}<br>
+                        <strong>Status:</strong>
+                        <span class="badge bg-{{ 'primary' if appointment.status == 'scheduled' else 'success' if appointment.status == 'completed' else 'danger' }}">
+                            {{ appointment.status.title() }}
+                        </span><br>
+                        <strong>Doctor:</strong> Dr. {{ appointment.doctor.first_name }} {{ appointment.doctor.last_name }}<br>
+                        <strong>Purpose:</strong> {{ appointment.purpose }}<br>
+                        <strong>Notes:</strong> {{ appointment.notes }}
+                    </p>
+                    {% else %}
+                    <p class="text-muted">Patient is not currently admitted as inpatient.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Billing Information</h5>
+                    {% if appointment and appointment.bills %}
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for bill in appointment.bills %}
+                                <tr>
+                                    <td>{{ bill.bill_date.strftime('%Y-%m-%d') }}</td>
+                                    <td>${{ bill.total_amount }}</td>
+                                    <td>
+                                        <span class="badge bg-{{ 'warning' if bill.payment_status == 'pending' else 'success' if bill.payment_status == 'paid' else 'info' }}">
+                                            {{ bill.payment_status.replace('_', ' ').title() }}
+                                        </span>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <p class="text-muted">No billing information available.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Assignment Notes</h5>
+                    {% if assignment %}
+                    <div class="mb-3">
+                        <strong>Assignment Date:</strong> {{ assignment.assignment_date.strftime('%Y-%m-%d') }}<br>
+                        <strong>Notes:</strong> {{ assignment.notes }}
+                    </div>
+                    {% else %}
+                    <p class="text-muted">No assignment notes available.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    <div class="row">
+        <div class="col-12 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Notes & Observations</h5>
+                    {% if notes %}
+                    <div class="list-group">
+                        {% for note in notes %}
+                        <div class="list-group-item">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">{{ note.title }}</h6>
+                                <small>{{ note.timestamp.strftime('%Y-%m-%d %H:%M') }}</small>
+                            </div>
+                            <p class="mb-1">{{ note.content }}</p>
+                            <small>By: {{ note.staff.first_name }} {{ note.staff.last_name }}</small>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-muted">No notes available.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

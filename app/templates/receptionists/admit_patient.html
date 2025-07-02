@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4 animate__animated animate__fadeInDown">
+        <div class="col">
+            <h2><i class="bi bi-hospital me-2"></i>Admit Patient</h2>
+        </div>
+        <div class="col-auto">
+            <a href="{{ url_for('receptionists.patient_details', patient_id=patient.id) }}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left me-2"></i>Back to Patient Details
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card shadow animate__animated animate__fadeIn">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="bi bi-person-plus me-2"></i>Assign Room to {{ patient.first_name }} {{ patient.last_name }}</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="" class="needs-validation" novalidate>
+                        {{ form.hidden_tag() }}
+                        <div class="mb-4">
+                            <div class="form-floating">
+                                {{ form.room(class="form-select", placeholder="Select Room", **{'data-bs-toggle': 'tooltip', 'title': 'Choose an available room for the patient'}) }}
+                                <label for="room">{{ form.room.label }}</label>
+                                {% for error in form.room.errors %}
+                                <div class="invalid-feedback animate__animated animate__headShake">
+                                    <i class="bi bi-exclamation-circle me-1"></i>{{ error }}
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <div class="form-floating">
+                                {{ form.doctor(class="form-select", placeholder="Select Doctor", **{'data-bs-toggle': 'tooltip', 'title': 'Assign a doctor to oversee the patient\'s care'}) }}
+                                <label for="doctor">{{ form.doctor.label }}</label>
+                                {% for error in form.doctor.errors %}
+                                <div class="invalid-feedback animate__animated animate__headShake">
+                                    <i class="bi bi-exclamation-circle me-1"></i>{{ error }}
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <div class="form-floating">
+                                {{ form.nurse(class="form-select", placeholder="Select Nurse", **{'data-bs-toggle': 'tooltip', 'title': 'Assign a nurse to provide care for the patient'}) }}
+                                <label for="nurse">{{ form.nurse.label }}</label>
+                                {% for error in form.nurse.errors %}
+                                <div class="invalid-feedback animate__animated animate__headShake">
+                                    <i class="bi bi-exclamation-circle me-1"></i>{{ error }}
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <div class="form-floating">
+                                {{ form.reason(class="form-control", placeholder="Reason for Admission", **{'data-bs-toggle': 'tooltip', 'title': 'Provide the medical reason for admitting this patient'}) }}
+                                <label for="reason">{{ form.reason.label }}</label>
+                                {% for error in form.reason.errors %}
+                                <div class="invalid-feedback animate__animated animate__headShake">
+                                    <i class="bi bi-exclamation-circle me-1"></i>{{ error }}
+                                </div>
+                                {% endfor %}
+                        </div>
+                        <div class="mb-3">
+                            <label for="notes" class="form-label">{{ form.notes.label }}</label>
+                            {{ form.notes(class="form-control", rows=3) }}
+                            {% for error in form.notes.errors %}
+                            <div class="text-danger">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="d-grid gap-2">
+                            {{ form.submit(class="btn btn-primary") }}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block scripts %}
+<script>
+    // Add visual feedback when form is submitted
+    document.querySelector('form').addEventListener('submit', function(e) {
+        const submitBtn = document.querySelector('input[type="submit"]');
+        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Admitting Patient...';
+        submitBtn.disabled = true;
+    });
+    
+    // Enhance form field interactions
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add animation to form fields when focused
+        const formElements = document.querySelectorAll('.form-select, .form-control');
+        formElements.forEach(element => {
+            element.addEventListener('focus', function() {
+                this.closest('.form-floating') ? 
+                    this.closest('.form-floating').classList.add('border-primary') : 
+                    this.classList.add('border-primary');
+            });
+            
+            element.addEventListener('blur', function() {
+                this.closest('.form-floating') ? 
+                    this.closest('.form-floating').classList.remove('border-primary') : 
+                    this.classList.remove('border-primary');
+            });
+        });
+        
+        // Initialize tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        });
+    });
+</script>
+{% endblock %}
+{% endblock %}

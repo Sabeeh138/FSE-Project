@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col">
+            <h2><i class="bi bi-building me-2"></i>Hospital Rooms</h2>
+        </div>
+        <div class="col-auto">
+            <a href="{{ url_for('nurses.dashboard') }}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left me-2"></i>Back to Dashboard
+            </a>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="bi bi-list-ul me-2"></i>Room List</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Room Number</th>
+                                    <th>Room Type</th>
+                                    <th>Status</th>
+                                    <th>Daily Rate</th>
+                                    <th>Current Patient</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for room in rooms %}
+                                <tr>
+                                    <td>{{ room.room_number }}</td>
+                                    <td>{{ room.room_type }}</td>
+                                    <td>
+                                        <span class="badge {% if room.status == 'available' %}bg-success{% elif room.status == 'occupied' %}bg-danger{% else %}bg-warning{% endif %}">
+                                            {{ room.status.title() }}
+                                        </span>
+                                    </td>
+                                    <td>${{ room.daily_rate }}</td>
+                                    <td>
+                                        {% if room.status == 'occupied' and room.appointments %}
+                                            {% set current_appointment = room.appointments|selectattr('status', 'equalto', 'scheduled')|first %}
+                                            {% if current_appointment %}
+                                                <a href="{{ url_for('nurses.patient_details', patient_id=current_appointment.patient_id) }}">
+                                                    {{ current_appointment.patient.first_name }} {{ current_appointment.patient.last_name }}
+                                                </a>
+                                            {% else %}
+                                                -
+                                            {% endif %}
+                                        {% else %}
+                                            -
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="bi bi-check-circle me-2"></i>Available Rooms</h5>
+                </div>
+                <div class="card-body">
+                    <h3 class="text-center">{{ rooms|selectattr('status', 'equalto', 'available')|list|length }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0"><i class="bi bi-x-circle me-2"></i>Occupied Rooms</h5>
+                </div>
+                <div class="card-body">
+                    <h3 class="text-center">{{ rooms|selectattr('status', 'equalto', 'occupied')|list|length }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header bg-warning text-white">
+                    <h5 class="mb-0"><i class="bi bi-tools me-2"></i>Maintenance Rooms</h5>
+                </div>
+                <div class="card-body">
+                    <h3 class="text-center">{{ rooms|selectattr('status', 'equalto', 'maintenance')|list|length }}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col">
+            <h2><i class="bi bi-person me-2"></i>Patient Profile</h2>
+        </div>
+        <div class="col-auto">
+            <a href="{{ url_for('patients.patient_list') }}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left me-2"></i>Back to Patients
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="bi bi-info-circle me-2"></i>Basic Information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Patient ID:</div>
+                        <div class="col-md-8">{{ patient.id }}</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Full Name:</div>
+                        <div class="col-md-8">{{ patient.first_name }} {{ patient.last_name }}</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Date of Birth:</div>
+                        <div class="col-md-8">{{ patient.date_of_birth.strftime('%d-%m-%Y') }}</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Gender:</div>
+                        <div class="col-md-8">{{ patient.gender }}</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Blood Group:</div>
+                        <div class="col-md-8">{{ patient.blood_group }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="bi bi-telephone me-2"></i>Contact Information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Email:</div>
+                        <div class="col-md-8">{{ patient.email }}</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Contact Number:</div>
+                        <div class="col-md-8">{{ patient.contact_number }}</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Address:</div>
+                        <div class="col-md-8">{{ patient.address }}</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Emergency Contact:</div>
+                        <div class="col-md-8">{{ patient.emergency_contact }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="bi bi-clipboard2-pulse me-2"></i>Medical Information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Medical History:</div>
+                        <div class="col-md-8">{{ patient.medical_history }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="bi bi-clipboard-plus me-2"></i>Medical Records</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2 mb-3">
+                        <a href="{{ url_for('patients.medical_records', patient_id=patient.id) }}" class="btn btn-outline-primary">
+                            <i class="bi bi-clipboard-check me-2"></i>View Medical Records
+                        </a>
+                        {% if current_user.role == 'doctor' %}
+                        <a href="{{ url_for('patients.add_medical_record', patient_id=patient.id) }}" class="btn btn-primary">
+                            <i class="bi bi-plus-circle me-2"></i>Add Medical Record
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="bi bi-calendar-check me-2"></i>Appointments</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2 mb-3">
+                        <a href="{{ url_for('patients.appointments', patient_id=patient.id) }}" class="btn btn-outline-primary">
+                            <i class="bi bi-calendar3 me-2"></i>View Appointments
+                        </a>
+                        {% if current_user.role == 'receptionist' %}
+                        <a href="{{ url_for('patients.schedule_appointment', patient_id=patient.id) }}" class="btn btn-primary">
+                            <i class="bi bi-plus-circle me-2"></i>Schedule Appointment
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="bi bi-file-medical me-2"></i>Prescriptions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2 mb-3">
+                        <a href="{{ url_for('patients.prescriptions', patient_id=patient.id) }}" class="btn btn-outline-primary">
+                            <i class="bi bi-file-earmark-text me-2"></i>View Prescriptions
+                        </a>
+                        {% if current_user.role == 'doctor' %}
+                        <a href="{{ url_for('doctors.create_prescription', patient_id=patient.id) }}" class="btn btn-primary">
+                            <i class="bi bi-plus-circle me-2"></i>Create Prescription
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

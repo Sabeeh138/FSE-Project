@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col">
+            <h2><i class="bi bi-speedometer2 me-2"></i>Store Manager Dashboard</h2>
+        </div>
+        <div class="col text-end">
+            <a href="{{ url_for('store.edit_profile') }}" class="btn btn-primary">
+                <i class="bi bi-person-gear me-2"></i>Edit Profile
+            </a>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Profile Information</h5>
+                    <p class="card-text">
+                        <strong>Name:</strong> {{ store_manager.first_name }} {{ store_manager.last_name }}<br>
+                        <strong>Department:</strong> {{ store_manager.department }}<br>
+                        <strong>Contact:</strong> {{ store_manager.contact_number }}<br>
+                        <strong>Email:</strong> {{ store_manager.email }}
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Low Stock Items</h5>
+                    {% if low_stock_items %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Item Name</th>
+                                    <th>Category</th>
+                                    <th>Current Stock</th>
+                                    <th>Reorder Level</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in low_stock_items %}
+                                <tr>
+                                    <td>{{ item.name }}</td>
+                                    <td>{{ item.category }}</td>
+                                    <td>
+                                        <span class="badge bg-{{ 'danger' if item.quantity <= item.reorder_level else 'warning' }}">
+                                            {{ item.quantity }}
+                                        </span>
+                                    </td>
+                                    <td>{{ item.reorder_level }}</td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <a href="{{ url_for('store.item_details', item_id=item.id) }}" class="btn btn-sm btn-info">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+                                            <a href="{{ url_for('store.reorder_item', item_id=item.id) }}" class="btn btn-sm btn-warning">
+                                                <i class="bi bi-cart-plus"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <p class="text-muted">No items are running low on stock.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Quick Actions</h5>
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <a href="{{ url_for('store.add_inventory_item') }}" class="btn btn-outline-primary w-100">
+                                <i class="bi bi-plus-lg me-2"></i>Add New Item
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="{{ url_for('store.inventory') }}" class="btn btn-outline-info w-100">
+                                <i class="bi bi-box-seam me-2"></i>View Inventory
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="{{ url_for('store.suppliers') }}" class="btn btn-outline-success w-100">
+                                <i class="bi bi-truck me-2"></i>Manage Suppliers
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="{{ url_for('store.orders') }}" class="btn btn-outline-secondary w-100">
+                                <i class="bi bi-clipboard-check me-2"></i>Purchase Orders
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

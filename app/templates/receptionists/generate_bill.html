@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Generate Bill</h1>
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5>Patient Information</h5>
+        </div>
+        <div class="card-body">
+            {% if admission %}
+                <p><strong>Name:</strong> {{ admission.patient.first_name }} {{ admission.patient.last_name }}</p>
+                <p><strong>Room:</strong> {{ admission.room.room_number }} ({{ admission.room.room_type }})</p>
+                <p><strong>Admission Date:</strong> {{ admission.admission_date.strftime('%Y-%m-%d %H:%M') }}</p>
+                <p><strong>Discharge Date:</strong> {{ admission.discharge_date.strftime('%Y-%m-%d %H:%M') if admission.discharge_date else 'Not discharged yet' }}</p>
+                <p><strong>Room Charges:</strong> ${{ room_charges }} ({{ admission.room.daily_rate }} per day)</p>
+            {% elif appointment %}
+                <p><strong>Name:</strong> {{ appointment.patient.first_name }} {{ appointment.patient.last_name }}</p>
+                <p><strong>Room:</strong> {{ appointment.room.room_number }} ({{ appointment.room.room_type }})</p>
+                <p><strong>Doctor:</strong> Dr. {{ appointment.doctor.first_name }} {{ appointment.doctor.last_name }}</p>
+                <p><strong>Nurse:</strong> {{ appointment.nurse.first_name }} {{ appointment.nurse.last_name }}</p>
+                <p><strong>Admission Date:</strong> {{ appointment.appointment_date.strftime('%Y-%m-%d %H:%M') }}</p>
+                <p><strong>Status:</strong> {{ appointment.status }}</p>
+                <p><strong>Room Charges:</strong> ${{ room_charges }} ({{ appointment.room.daily_rate }} per day)</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h5>Bill Details</h5>
+        </div>
+        <div class="card-body">
+            <form method="POST" action="">
+                {{ form.hidden_tag() }}
+                <div class="form-group mb-3">
+                    <label for="medical_charges">Medical Charges ($)</label>
+                    {{ form.medical_charges(class="form-control") }}
+                </div>
+                <div class="form-group mb-3">
+                    <label for="medication_charges">Medication Charges ($)</label>
+                    {{ form.medication_charges(class="form-control") }}
+                </div>
+                <div class="form-group mb-3">
+                    <label for="other_charges">Other Charges ($)</label>
+                    {{ form.other_charges(class="form-control") }}
+                </div>
+                <div class="form-group mb-3">
+                    <label for="notes">Billing Notes</label>
+                    {{ form.notes(class="form-control") }}
+                </div>
+                <div class="form-group">
+                    {{ form.submit(class="btn btn-primary") }}
+                    {% if admission %}
+                        <a href="{{ url_for('receptionists.patient_details', patient_id=admission.patient_id) }}" class="btn btn-secondary">Cancel</a>
+                    {% elif appointment %}
+                        <a href="{{ url_for('receptionists.patient_details', patient_id=appointment.patient_id) }}" class="btn btn-secondary">Cancel</a>
+                    {% endif %}
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

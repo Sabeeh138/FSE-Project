@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col">
+            <h2><i class="bi bi-person me-2"></i>Patient Details</h2>
+        </div>
+        <div class="col text-end">
+            <a href="{{ url_for('doctors.create_prescription', patient_id=patient.id) }}" class="btn btn-primary">
+                <i class="bi bi-file-medical me-2"></i>Create Prescription
+            </a>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Patient Information</h5>
+                    <p class="card-text">
+                        <strong>Name:</strong> {{ patient.first_name }} {{ patient.last_name }}<br>
+                        <strong>Date of Birth:</strong> {{ patient.date_of_birth.strftime('%Y-%m-%d') }}<br>
+                        <strong>Gender:</strong> {{ patient.gender }}<br>
+                        <strong>Blood Group:</strong> {{ patient.blood_group }}<br>
+                        <strong>Contact:</strong> {{ patient.contact_number }}<br>
+                        <strong>Email:</strong> {{ patient.email }}<br>
+                        <strong>Address:</strong> {{ patient.address }}<br>
+                        <strong>Emergency Contact:</strong> {{ patient.emergency_contact }}
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Medical Records</h5>
+                    {% if medical_records %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Diagnosis</th>
+                                    <th>Treatment</th>
+                                    <th>Notes</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for record in medical_records %}
+                                <tr>
+                                    <td>{{ record.record_date.strftime('%Y-%m-%d') }}</td>
+                                    <td>{{ record.diagnosis }}</td>
+                                    <td>{{ record.treatment }}</td>
+                                    <td>{{ record.notes }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <p class="text-muted">No medical records found.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Prescriptions</h5>
+                    {% if prescriptions %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Doctor</th>
+                                    <th>Notes</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for prescription in prescriptions %}
+                                <tr>
+                                    <td>{{ prescription.prescription_date.strftime('%Y-%m-%d') }}</td>
+                                    <td>Dr. {{ prescription.doctor.first_name }} {{ prescription.doctor.last_name }}</td>
+                                    <td>{{ prescription.notes }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <p class="text-muted">No prescriptions found.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

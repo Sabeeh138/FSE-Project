@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col">
+            <h2><i class="bi bi-calendar-check me-2"></i>My Appointments</h2>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Date & Time</th>
+                            <th>Patient</th>
+                            <th>Purpose</th>
+                            <th>Notes</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for appointment in appointments %}
+                        <tr>
+                            <td>{{ appointment.appointment_date.strftime('%Y-%m-%d %H:%M') }}</td>
+                            <td>
+                                <a href="{{ url_for('doctors.patient_details', patient_id=appointment.patient.id) }}" class="text-decoration-none">
+                                    {{ appointment.patient.first_name }} {{ appointment.patient.last_name }}
+                                </a>
+                            </td>
+                            <td>{{ appointment.purpose }}</td>
+                            <td>{{ appointment.notes }}</td>
+                            <td>
+                                <span class="badge bg-{{ 'primary' if appointment.status == 'scheduled' else 'success' if appointment.status == 'completed' else 'danger' }}">
+                                    {{ appointment.status.title() }}
+                                </span>
+                            </td>
+                            <td>
+                                <div class="btn-group">
+                                    <a href="{{ url_for('doctors.patient_details', patient_id=appointment.patient.id) }}" class="btn btn-sm btn-info" title="View Patient Details">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    {% if appointment.status == 'scheduled' %}
+                                    <form action="{{ url_for('doctors.update_appointment_status', appointment_id=appointment.id) }}" method="POST" class="d-inline">
+                                        <input type="hidden" name="status" value="completed">
+                                        <button type="submit" class="btn btn-sm btn-success" title="Mark as Completed">
+                                            <i class="bi bi-check-lg"></i>
+                                        </button>
+                                    </form>
+                                    <form action="{{ url_for('doctors.update_appointment_status', appointment_id=appointment.id) }}" method="POST" class="d-inline">
+                                        <input type="hidden" name="status" value="cancelled">
+                                        <button type="submit" class="btn btn-sm btn-danger" title="Cancel Appointment">
+                                            <i class="bi bi-x-lg"></i>
+                                        </button>
+                                    </form>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="6" class="text-center text-muted">No appointments found.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

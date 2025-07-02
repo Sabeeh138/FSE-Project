@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col">
+            <h2><i class="bi bi-speedometer2 me-2"></i>Receptionist Dashboard</h2>
+        </div>
+        <div class="col text-end">
+            <a href="{{ url_for('receptionists.edit_profile') }}" class="btn btn-primary">
+                <i class="bi bi-person-gear me-2"></i>Edit Profile
+            </a>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Profile Information</h5>
+                    <p class="card-text">
+                        <strong>Name:</strong> {{ receptionist.first_name }} {{ receptionist.last_name }}<br>
+                        <strong>Department:</strong> {{ receptionist.department }}<br>
+                        <strong>Shift:</strong> {{ receptionist.shift }}<br>
+                        <strong>Contact:</strong> {{ receptionist.contact_number }}<br>
+                        <strong>Email:</strong> {{ receptionist.email }}
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Today's Appointments</h5>
+                    {% if today_appointments %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Time</th>
+                                    <th>Patient</th>
+                                    <th>Doctor</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for appointment in today_appointments %}
+                                <tr>
+                                    <td>{{ appointment.appointment_date.strftime('%H:%M') }}</td>
+                                    <td>{{ appointment.patient.first_name }} {{ appointment.patient.last_name }}</td>
+                                    <td>Dr. {{ appointment.doctor.first_name }} {{ appointment.doctor.last_name }}</td>
+                                    <td>
+                                        <span class="badge bg-{{ 'primary' if appointment.status == 'scheduled' else 'success' if appointment.status == 'completed' else 'danger' }}">
+                                            {{ appointment.status.title() }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <a href="{{ url_for('receptionists.appointment_details', appointment_id=appointment.id) }}" class="btn btn-sm btn-info">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+                                            <a href="{{ url_for('receptionists.edit_appointment', appointment_id=appointment.id) }}" class="btn btn-sm btn-primary">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <p class="text-muted">No appointments scheduled for today.</p>
+                    {% endif %}
+                    <div class="text-end mt-3">
+                        <a href="{{ url_for('receptionists.schedule_appointment') }}" class="btn btn-success">
+                            <i class="bi bi-plus-lg me-2"></i>New Appointment
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Quick Actions</h5>
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <a href="{{ url_for('receptionists.register_patient') }}" class="btn btn-outline-primary w-100">
+                                <i class="bi bi-person-plus me-2"></i>Register Patient
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="{{ url_for('receptionists.patients') }}" class="btn btn-outline-info w-100">
+                                <i class="bi bi-people me-2"></i>View Patients
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="{{ url_for('receptionists.appointments') }}" class="btn btn-outline-success w-100">
+                                <i class="bi bi-calendar-check me-2"></i>All Appointments
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="{{ url_for('receptionists.doctors') }}" class="btn btn-outline-secondary w-100">
+                                <i class="bi bi-person-badge me-2"></i>View Doctors
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

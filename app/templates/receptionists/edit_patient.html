@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Edit Patient</h2>
+    <form method="POST" class="mt-4">
+        {{ form.hidden_tag() }}
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                {{ form.first_name.label(class="form-label") }}
+                {{ form.first_name(class="form-control" + (' is-invalid' if form.first_name.errors else '')) }}
+                {% for error in form.first_name.errors %}
+                    <div class="invalid-feedback">{{ error }}</div>
+                {% endfor %}
+            </div>
+            <div class="col-md-6 mb-3">
+                {{ form.last_name.label(class="form-label") }}
+                {{ form.last_name(class="form-control" + (' is-invalid' if form.last_name.errors else '')) }}
+                {% for error in form.last_name.errors %}
+                    <div class="invalid-feedback">{{ error }}</div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                {{ form.date_of_birth.label(class="form-label") }}
+                {{ form.date_of_birth(class="form-control" + (' is-invalid' if form.date_of_birth.errors else ''), type="date") }}
+                {% for error in form.date_of_birth.errors %}
+                    <div class="invalid-feedback">{{ error }}</div>
+                {% endfor %}
+            </div>
+            <div class="col-md-6 mb-3">
+                {{ form.gender.label(class="form-label") }}
+                {{ form.gender(class="form-select" + (' is-invalid' if form.gender.errors else '')) }}
+                {% for error in form.gender.errors %}
+                    <div class="invalid-feedback">{{ error }}</div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                {{ form.blood_group.label(class="form-label") }}
+                {{ form.blood_group(class="form-select" + (' is-invalid' if form.blood_group.errors else '')) }}
+                {% for error in form.blood_group.errors %}
+                    <div class="invalid-feedback">{{ error }}</div>
+                {% endfor %}
+            </div>
+            <div class="col-md-6 mb-3">
+                {{ form.contact_number.label(class="form-label") }}
+                {{ form.contact_number(class="form-control" + (' is-invalid' if form.contact_number.errors else '')) }}
+                {% for error in form.contact_number.errors %}
+                    <div class="invalid-feedback">{{ error }}</div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="mb-3">
+            {{ form.email.label(class="form-label") }}
+            {{ form.email(class="form-control" + (' is-invalid' if form.email.errors else '')) }}
+            {% for error in form.email.errors %}
+                <div class="invalid-feedback">{{ error }}</div>
+            {% endfor %}
+        </div>
+        <div class="mb-3">
+            {{ form.address.label(class="form-label") }}
+            {{ form.address(class="form-control" + (' is-invalid' if form.address.errors else '')) }}
+            {% for error in form.address.errors %}
+                <div class="invalid-feedback">{{ error }}</div>
+            {% endfor %}
+        </div>
+        <div class="mb-3">
+            {{ form.emergency_contact.label(class="form-label") }}
+            {{ form.emergency_contact(class="form-control" + (' is-invalid' if form.emergency_contact.errors else '')) }}
+            {% for error in form.emergency_contact.errors %}
+                <div class="invalid-feedback">{{ error }}</div>
+            {% endfor %}
+        </div>
+        <div class="mb-3">
+            {{ form.submit(class="btn btn-primary") }}
+            <a href="{{ url_for('receptionists.patients') }}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

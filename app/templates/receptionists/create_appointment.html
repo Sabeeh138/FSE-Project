@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col">
+            <h2><i class="bi bi-calendar-plus me-2"></i>Create New Appointment</h2>
+        </div>
+        <div class="col-auto">
+            <a href="{{ url_for('receptionists.appointments') }}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left me-2"></i>Back to Appointments
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card">
+                <div class="card-body">
+                    <form method="POST">
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="mb-3">
+                            {{ form.patient_id.label(class="form-label") }}
+                            {{ form.patient_id(class="form-select" + (" is-invalid" if form.patient_id.errors else "")) }}
+                            {% for error in form.patient_id.errors %}
+                                <div class="invalid-feedback">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            {{ form.doctor_id.label(class="form-label") }}
+                            {{ form.doctor_id(class="form-select" + (" is-invalid" if form.doctor_id.errors else "")) }}
+                            {% for error in form.doctor_id.errors %}
+                                <div class="invalid-feedback">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            {{ form.date.label(class="form-label") }}
+                            {{ form.date(class="form-control" + (" is-invalid" if form.date.errors else ""), type="date") }}
+                            {% for error in form.date.errors %}
+                                <div class="invalid-feedback">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            {{ form.time.label(class="form-label") }}
+                            {{ form.time(class="form-control" + (" is-invalid" if form.time.errors else ""), type="time") }}
+                            {% for error in form.time.errors %}
+                                <div class="invalid-feedback">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            {{ form.reason.label(class="form-label") }}
+                            {{ form.reason(class="form-control" + (" is-invalid" if form.reason.errors else ""), rows=3) }}
+                            {% for error in form.reason.errors %}
+                                <div class="invalid-feedback">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            {{ form.status.label(class="form-label") }}
+                            {{ form.status(class="form-select" + (" is-invalid" if form.status.errors else "")) }}
+                            {% for error in form.status.errors %}
+                                <div class="invalid-feedback">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            {{ form.submit(class="btn btn-primary") }}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

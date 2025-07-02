@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col">
+            <h2><i class="bi bi-box-arrow-right me-2"></i>Discharge Patient</h2>
+        </div>
+        <div class="col-auto">
+            <a href="{{ url_for('receptionists.patient_details', patient_id=patient.id) }}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left me-2"></i>Back to Patient Details
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card">
+                <div class="card-header bg-warning text-white">
+                    <h5 class="mb-0"><i class="bi bi-hospital me-2"></i>Discharge {{ patient.first_name }} {{ patient.last_name }}</h5>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <h6 class="mb-2">Current Inpatient Information:</h6>
+                        <div class="row mb-2">
+                            <div class="col-md-4 fw-bold">Room:</div>
+                            <div class="col-md-8">{{ appointment.room.room_number }} ({{ appointment.room.room_type }})</div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-md-4 fw-bold">Doctor:</div>
+                            <div class="col-md-8">Dr. {{ appointment.doctor.first_name }} {{ appointment.doctor.last_name }}</div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-md-4 fw-bold">Admission Date:</div>
+                            <div class="col-md-8">{{ appointment.appointment_date.strftime('%d-%m-%Y %H:%M') }}</div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-md-4 fw-bold">Purpose:</div>
+                            <div class="col-md-8">{{ appointment.purpose }}</div>
+                        </div>
+                    </div>
+
+                    <form method="POST" action="">
+                        {{ form.hidden_tag() }}
+                        <div class="mb-3">
+                            <label for="notes" class="form-label">{{ form.notes.label }}</label>
+                            {{ form.notes(class="form-control", rows=3) }}
+                            {% for error in form.notes.errors %}
+                            <div class="text-danger">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="d-grid gap-2">
+                            {{ form.submit(class="btn btn-warning") }}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

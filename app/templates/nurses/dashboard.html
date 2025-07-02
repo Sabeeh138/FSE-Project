@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col">
+            <h2><i class="bi bi-speedometer2 me-2"></i>Nurse Dashboard</h2>
+        </div>
+        <div class="col text-end">
+            <a href="{{ url_for('nurses.edit_profile') }}" class="btn btn-primary">
+                <i class="bi bi-person-gear me-2"></i>Edit Profile
+            </a>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Profile Information</h5>
+                    <p class="card-text">
+                        <strong>Name:</strong> {{ nurse.first_name }} {{ nurse.last_name }}<br>
+                        <strong>Department:</strong> {{ nurse.department }}<br>
+                        <strong>Shift:</strong> {{ nurse.shift }}<br>
+                        <strong>Experience:</strong> {{ nurse.experience_years }} years<br>
+                        <strong>Contact:</strong> {{ nurse.contact_number }}<br>
+                        <strong>Email:</strong> {{ nurse.email }}
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Today's Assigned Patients</h5>
+                    {% if assignments %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Patient Name</th>
+                                    <th>Room</th>
+                                    <th>Doctor</th>
+                                    <th>Admission Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for assignment in assignments %}
+                                <tr>
+                                    <td>{{ assignment.patient.first_name }} {{ assignment.patient.last_name }}</td>
+                                    <td>
+                                        {% set appointment = assignment.patient.appointments|selectattr('is_inpatient', 'equalto', true)|selectattr('status', 'equalto', 'scheduled')|first %}
+                                        {% if appointment and appointment.room %}
+                                            {{ appointment.room.room_number }} ({{ appointment.room.room_type }})
+                                        {% else %}
+                                            Not admitted
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if appointment and appointment.doctor %}
+                                            Dr. {{ appointment.doctor.first_name }} {{ appointment.doctor.last_name }}
+                                        {% else %}
+                                            -
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if appointment %}
+                                            {{ appointment.appointment_date.strftime('%Y-%m-%d') }}
+                                        {% else %}
+                                            -
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <a href="{{ url_for('nurses.patient_details', patient_id=assignment.patient.id) }}" class="btn btn-sm btn-info">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+                                            <a href="{{ url_for('nurses.update_patient_status', patient_id=assignment.patient.id) }}" class="btn btn-sm btn-primary">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <p class="text-muted">No patients assigned for today.</p>
+                    {% endif %}
+                    <div class="text-end mt-3">
+                        <a href="{{ url_for('nurses.assigned_patients') }}" class="btn btn-outline-primary me-2">
+                            <i class="bi bi-people me-2"></i>View All Assigned Patients
+                        </a>
+                        <a href="{{ url_for('nurses.rooms') }}" class="btn btn-outline-info">
+                            <i class="bi bi-building me-2"></i>View Hospital Rooms
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Recent Activities</h5>
+                    {% if activities %}
+                    <div class="list-group">
+                        {% for activity in activities %}
+                        <div class="list-group-item">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">{{ activity.description }}</h6>
+                                <small>{{ activity.timestamp.strftime('%Y-%m-%d %H:%M') }}</small>
+                            </div>
+                            <p class="mb-1">Patient: {{ activity.patient.first_name }} {{ activity.patient.last_name }}</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-muted">No recent activities.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

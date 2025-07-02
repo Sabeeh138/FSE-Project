@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col">
+            <h2><i class="bi bi-calendar-check me-2"></i>Appointments</h2>
+        </div>
+        <div class="col-auto">
+            <a href="{{ url_for('patients.patient_profile', patient_id=patient.id) }}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left me-2"></i>Back to Patient Profile
+            </a>
+            {% if current_user.role == 'receptionist' %}
+            <a href="{{ url_for('patients.schedule_appointment', patient_id=patient.id) }}" class="btn btn-primary">
+                <i class="bi bi-plus-circle me-2"></i>Schedule Appointment
+            </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="bi bi-person me-2"></i>{{ patient.first_name }} {{ patient.last_name }}'s Appointments</h5>
+                </div>
+                <div class="card-body">
+                    {% if appointments %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Date & Time</th>
+                                    <th>Doctor</th>
+                                    <th>Purpose</th>
+                                    <th>Notes</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for appointment in appointments %}
+                                <tr>
+                                    <td>{{ appointment.appointment_date.strftime('%Y-%m-%d %H:%M') }}</td>
+                                    <td>Dr. {{ appointment.doctor.first_name }} {{ appointment.doctor.last_name }}</td>
+                                    <td>{{ appointment.purpose }}</td>
+                                    <td>{{ appointment.notes }}</td>
+                                    <td>
+                                        <span class="badge bg-{{ 'primary' if appointment.status == 'scheduled' else 'success' if appointment.status == 'completed' else 'danger' }}">
+                                            {{ appointment.status.title() }}
+                                        </span>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle me-2"></i>No appointments found for this patient.
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4 animate__animated animate__fadeInDown">
+        <div class="col">
+            <h2><i class="bi bi-people me-2"></i>My Patients</h2>
+        </div>
+        <div class="col-auto">
+            <div class="input-group">
+                <input type="text" id="patientSearch" class="form-control" placeholder="Search patients..." aria-label="Search patients">
+                <span class="input-group-text"><i class="bi bi-search"></i></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="row animate__animated animate__fadeIn">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="bi bi-list-ul me-2"></i>Patient List</h5>
+                </div>
+                <div class="card-body">
+                    {% if patients %}
+                    <div class="table-responsive">
+                        <table class="table table-hover" id="patientsTable">
+                            <thead class="table-primary">
+                                <tr>
+                                    <th><i class="bi bi-hash me-1"></i>ID</th>
+                                    <th><i class="bi bi-person me-1"></i>Name</th>
+                                    <th><i class="bi bi-gender-ambiguous me-1"></i>Gender</th>
+                                    <th><i class="bi bi-calendar-date me-1"></i>Date of Birth</th>
+                                    <th><i class="bi bi-telephone me-1"></i>Contact</th>
+                                    <th><i class="bi bi-droplet me-1"></i>Blood Group</th>
+                                    <th><i class="bi bi-gear me-1"></i>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for patient in patients %}
+                                <tr class="align-middle">
+                                    <td>{{ patient.id }}</td>
+                                    <td class="fw-bold">{{ patient.first_name }} {{ patient.last_name }}</td>
+                                    <td>{{ patient.gender }}</td>
+                                    <td>{{ patient.date_of_birth.strftime('%d-%m-%Y') }}</td>
+                                    <td>{{ patient.contact_number }}</td>
+                                    <td><span class="badge bg-danger">{{ patient.blood_group }}</span></td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <a href="{{ url_for('doctors.patient_details', patient_id=patient.id) }}" class="btn btn-sm btn-info" data-bs-toggle="tooltip" title="View Patient Details">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+                                            <a href="{{ url_for('doctors.create_prescription', patient_id=patient.id) }}" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" title="Create Prescription">
+                                                <i class="bi bi-file-medical"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info animate__animated animate__fadeIn">
+                        <i class="bi bi-info-circle me-2"></i>No patients assigned to you yet.
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

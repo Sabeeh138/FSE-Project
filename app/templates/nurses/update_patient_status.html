@@ -1,0 +1,285 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4 animate__animated animate__fadeInDown">
+        <div class="col">
+            <h2 class="text-gradient"><i class="bi bi-clipboard-pulse me-2"></i>Update Patient Status</h2>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card shadow-lg glass-card animate__animated animate__fadeIn">
+                <div class="card-header bg-gradient-primary text-white">
+                    <h5 class="card-title mb-0"><i class="bi bi-person-badge me-2"></i>Patient: {{ patient.first_name }} {{ patient.last_name }}</h5>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST" class="needs-validation" novalidate>
+                        {{ form.hidden_tag() }}
+                        <div class="row mb-4 g-3">
+                            <div class="col-md-6">
+                                <div class="form-floating mb-3 input-group-hover">
+                                    {{ form.status(class="form-select custom-select", placeholder="Status", **{'data-bs-toggle': 'tooltip', 'title': 'Select the current status of the patient'}) }}
+                                    {{ form.status.label() }}
+                                    {% if form.status.errors %}
+                                    <div class="invalid-feedback animate__animated animate__headShake">
+                                        {% for error in form.status.errors %}
+                                        <i class="bi bi-exclamation-circle me-1"></i>{{ error }}
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating mb-3 input-group-hover">
+                                    {{ form.blood_pressure(class="form-control custom-input", placeholder="Blood Pressure", **{'data-bs-toggle': 'tooltip', 'title': 'Format: systolic/diastolic (e.g., 120/80)'}) }}
+                                    {{ form.blood_pressure.label() }}
+                                    {% if form.blood_pressure.errors %}
+                                    <div class="invalid-feedback animate__animated animate__headShake">
+                                        {% for error in form.blood_pressure.errors %}
+                                        <i class="bi bi-exclamation-circle me-1"></i>{{ error }}
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-4 g-3">
+                            <div class="col-md-6">
+                                <div class="form-floating mb-3 input-group-hover">
+                                    {{ form.temperature(class="form-control custom-input", placeholder="Temperature", **{'data-bs-toggle': 'tooltip', 'title': 'Body temperature in °C'}) }}
+                                    {{ form.temperature.label() }}
+                                    {% if form.temperature.errors %}
+                                    <div class="invalid-feedback animate__animated animate__headShake">
+                                        {% for error in form.temperature.errors %}
+                                        <i class="bi bi-exclamation-circle me-1"></i>{{ error }}
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating mb-3 input-group-hover">
+                                    {{ form.pulse(class="form-control custom-input", placeholder="Pulse", **{'data-bs-toggle': 'tooltip', 'title': 'Heart rate in beats per minute'}) }}
+                                    {{ form.pulse.label() }}
+                                    {% if form.pulse.errors %}
+                                    <div class="invalid-feedback animate__animated animate__headShake">
+                                        {% for error in form.pulse.errors %}
+                                        <i class="bi bi-exclamation-circle me-1"></i>{{ error }}
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-floating mb-4 input-group-hover">
+                            {{ form.notes(class="form-control custom-textarea", rows=4, style="height: 120px", placeholder="Notes", **{'data-bs-toggle': 'tooltip', 'title': 'Additional observations or comments about the patient'}) }}
+                            {{ form.notes.label() }}
+                            {% if form.notes.errors %}
+                            <div class="invalid-feedback animate__animated animate__headShake">
+                                {% for error in form.notes.errors %}
+                                <i class="bi bi-exclamation-circle me-1"></i>{{ error }}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="d-flex justify-content-between mt-4">
+                            <a href="{{ url_for('nurses.patient_details', patient_id=patient.id) }}" class="btn btn-secondary btn-hover-effect">
+                                <i class="bi bi-arrow-left me-2"></i>Back to Patient
+                            </a>
+                            {{ form.submit(class="btn btn-primary btn-hover-effect pulse-on-hover", **{'data-bs-toggle': 'tooltip', 'title': 'Save the updated patient status'}) }}
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer bg-light text-muted">
+                    <small><i class="bi bi-info-circle me-1 pulse-icon"></i>All vital signs will be recorded with the current timestamp</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block scripts %}
+<style>
+    /* Elegant color scheme with sophisticated gradients */
+    :root {
+        --primary-gradient: linear-gradient(135deg, #5e72e4, #825ee4);
+        --secondary-gradient: linear-gradient(135deg, #344675, #4a6283);
+        --accent-gradient: linear-gradient(135deg, #11cdef, #1171ef);
+        --success-gradient: linear-gradient(135deg, #2dce89, #2dcca7);
+        --warning-gradient: linear-gradient(135deg, #fb6340, #fbb140);
+        --info-gradient: linear-gradient(135deg, #11cdef, #1171ef);
+    }
+    
+    /* Glass card effect with enhanced elegance */
+    .glass-card {
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 16px;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    
+    .glass-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 15px 35px rgba(50, 50, 93, 0.1), 0 5px 15px rgba(0, 0, 0, 0.07);
+    }
+    
+    /* Gradient backgrounds */
+    .bg-gradient-primary {
+        background: var(--primary-gradient);
+        border-radius: 16px 16px 0 0;
+    }
+    
+    .text-gradient {
+        background: var(--primary-gradient);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        font-weight: 600;
+    }
+    
+    /* Form styling with refined aesthetics */
+    .custom-input, .custom-select, .custom-textarea {
+        border-radius: 10px;
+        border: 1px solid rgba(50, 50, 93, 0.1);
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 5px rgba(50, 50, 93, 0.05);
+    }
+    
+    .custom-input:focus, .custom-select:focus, .custom-textarea:focus {
+        border-color: #5e72e4;
+        box-shadow: 0 0 0 3px rgba(94, 114, 228, 0.2);
+    }
+    
+    .input-group-hover {
+        transition: all 0.3s ease;
+        border-radius: 10px;
+        border-left: 3px solid transparent;
+    }
+    
+    .input-group-hover:hover {
+        border-left: 3px solid #5e72e4;
+        transform: translateX(5px);
+    }
+    
+    /* Button effects with elegant animations */
+    .btn-hover-effect {
+        position: relative;
+        overflow: hidden;
+        z-index: 1;
+        transition: all 0.4s ease;
+    }
+    
+    .btn-hover-effect:before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 0%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.2);
+        transition: all 0.4s ease-in-out;
+        z-index: -1;
+    }
+    
+    .btn-hover-effect:hover:before {
+        width: 100%;
+    }
+    
+    .pulse-on-hover:hover {
+        animation: pulse 1.5s infinite;
+    }
+    
+    .pulse-icon {
+        animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+        0% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.05);
+        }
+        100% {
+            transform: scale(1);
+        }
+    }
+    
+    /* Additional elegant styling */
+    .card-footer {
+        border-top: 1px solid rgba(50, 50, 93, 0.05);
+        background-color: rgba(248, 249, 254, 0.7);
+    }
+    
+    .has-value {
+        border-left: 3px solid #5e72e4;
+    }
+</style>
+
+<script>
+    // Add visual feedback when form is submitted
+    document.querySelector('form').addEventListener('submit', function(e) {
+        const submitBtn = document.querySelector('input[type="submit"]');
+        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Saving...';
+        submitBtn.disabled = true;
+        
+        // Add a subtle page transition
+        document.querySelector('.card').classList.add('animate__animated', 'animate__fadeOutUp');
+    });
+    
+    // Enhanced visual indicators for vital signs
+    document.addEventListener('DOMContentLoaded', function() {
+        // Highlight fields as they're filled
+        const inputs = document.querySelectorAll('.form-control, .form-select');
+        
+        inputs.forEach(input => {
+            // Initial check for pre-filled values
+            if (input.value) {
+                input.closest('.form-floating').classList.add('has-value');
+            }
+            
+            input.addEventListener('focus', function() {
+                this.closest('.form-floating').classList.add('border-primary');
+                this.closest('.form-floating').style.transform = 'translateX(5px)';
+            });
+            
+            input.addEventListener('blur', function() {
+                this.closest('.form-floating').classList.remove('border-primary');
+                this.closest('.form-floating').style.transform = 'translateX(0)';
+                
+                // Add class if input has value
+                if (this.value) {
+                    this.closest('.form-floating').classList.add('has-value');
+                } else {
+                    this.closest('.form-floating').classList.remove('has-value');
+                }
+            });
+            
+            // Add subtle animation when typing
+            input.addEventListener('input', function() {
+                this.style.transition = 'transform 0.2s';
+                this.style.transform = 'translateY(-2px)';
+                setTimeout(() => {
+                    this.style.transform = 'translateY(0)';
+                }, 200);
+            });
+        });
+        
+        // Initialize tooltips
+        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl, {
+                animation: true,
+                delay: { show: 100, hide: 100 }
+            });
+        });
+    });
+</script>
+{% endblock %}
+{% endblock %}
